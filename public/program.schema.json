@@ -1,0 +1,311 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "program.schema.json",
+  "title": "Ironpage program",
+  "description": "A training program for Ironpage. Weights (seedWeight, weightLb) are in the program unit. Day ids must be unique; an exercise id may repeat across days (the lifts share history) but not within a day. Keep an exercise id when a lift continues across program versions: a new id starts with no history.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "unit",
+    "days"
+  ],
+  "properties": {
+    "unit": {
+      "enum": [
+        "lb",
+        "kg"
+      ],
+      "description": "Unit of every weight in the program."
+    },
+    "days": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/day"
+      }
+    }
+  },
+  "definitions": {
+    "day": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "exercises"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Stable id; sessions record it."
+        },
+        "name": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "warmup": {
+          "$ref": "#/definitions/warmup"
+        },
+        "exercises": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/exercise"
+          }
+        }
+      }
+    },
+    "warmup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "drills"
+      ],
+      "description": "General warm-up card shown before the day starts.",
+      "properties": {
+        "total": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Rough duration, e.g. \"~6 min\"."
+        },
+        "note": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What follows the warm-up."
+        },
+        "drills": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "dose"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "dose": {
+                "type": "string",
+                "pattern": "\\S",
+                "description": "e.g. \"2 x 12\" or \"5 / side\"."
+              },
+              "why": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            }
+          }
+        }
+      }
+    },
+    "exercise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "targetSets",
+        "targetReps",
+        "targetRPE",
+        "seedWeight",
+        "seedIsGuess",
+        "notes",
+        "muscles"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Stable id; history and weight pre-fill follow it."
+        },
+        "name": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "targetSets": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "targetReps": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Reps per working set; seconds when timed is true."
+        },
+        "targetRPE": {
+          "type": "number",
+          "minimum": 6,
+          "maximum": 10,
+          "description": "Target effort, RPE 6 to 10."
+        },
+        "seedWeight": {
+          "type": "number",
+          "minimum": 0,
+          "description": "First-session weight in the program unit; 0 for bodyweight."
+        },
+        "seedIsGuess": {
+          "type": "boolean",
+          "description": "True when seedWeight is an estimate to be found in the first session."
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/targetStep"
+          }
+        },
+        "rampSets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/rampSet"
+          },
+          "description": "Planned ramp (warm-up) sets before the working sets."
+        },
+        "notes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "text"
+            ],
+            "properties": {
+              "label": {
+                "type": "string",
+                "pattern": "\\S",
+                "description": "Short label, e.g. \"Setup\", \"Cue\"."
+              },
+              "text": {
+                "type": "string",
+                "pattern": "\\S",
+                "description": "One phrase; several points go one per line."
+              }
+            }
+          }
+        },
+        "then": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "How to progress once the target steps run out."
+        },
+        "restSec": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Rest after each working set, in seconds."
+        },
+        "supersetId": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Adjacent exercises sharing this id alternate as a superset."
+        },
+        "timed": {
+          "type": "boolean",
+          "description": "Reps are seconds held."
+        },
+        "muscles": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "enum": [
+              "chest",
+              "front-delts",
+              "side-delts",
+              "rear-delts",
+              "lats",
+              "upper-back",
+              "traps",
+              "biceps",
+              "triceps",
+              "forearms",
+              "abs",
+              "obliques",
+              "lower-back",
+              "glutes",
+              "quads",
+              "hamstrings",
+              "calves",
+              "tibialis"
+            ]
+          },
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "not": {
+            "additionalProperties": {
+              "const": 0
+            }
+          },
+          "description": "Muscle scores from 0 to 1 (1 primary, 0.75, 0.5, 0.25 minor); at least one above 0."
+        }
+      }
+    },
+    "targetStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from"
+      ],
+      "description": "Dated pre-fill floor; the latest step at or before the session start applies.",
+      "properties": {
+        "from": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Start, with an offset, e.g. \"2026-10-06T00:00:00-04:00\"."
+        },
+        "weightLb": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Minimum pre-fill weight in the program unit."
+        },
+        "reps": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sets": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rampSets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/rampSet"
+          }
+        }
+      }
+    },
+    "rampSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "weightLb",
+        "reps"
+      ],
+      "properties": {
+        "weightLb": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Ramp load, in the program unit."
+        },
+        "reps": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "restSec": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Rest after this ramp set, in seconds. Absent: no countdown."
+        }
+      }
+    }
+  }
+}

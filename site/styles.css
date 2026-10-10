@@ -1,0 +1,82 @@
+:root{
+  --bg:#0d0f10; --panel:#15181a; --panel2:#1c2023; --line:#262b2e;
+  --ink:#eef2f3; --dim:#98a4a9; --accent:#c8ff5e; --accent2:#7de0ff;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,monospace;
+  --sans:-apple-system,system-ui,"Segoe UI",sans-serif;
+  --scale:.78;
+}
+*{box-sizing:border-box}
+html{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;line-height:1.5}
+a{color:inherit}
+img{max-width:100%}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--accent2);outline-offset:3px;border-radius:6px}
+
+.skip{position:absolute;left:12px;top:-60px;background:var(--accent);color:#0d0f10;padding:10px 14px;border-radius:10px;font-weight:700;z-index:10}
+.skip:focus{top:12px}
+
+.hero{max-width:1100px;margin:0 auto;padding:56px 24px 40px;display:grid;grid-template-columns:1fr;gap:40px;align-items:center}
+.kicker{font:600 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin:0}
+h1{font:600 clamp(40px,7vw,64px)/1.05 var(--serif);letter-spacing:-.015em;margin:14px 0 10px}
+.tagline{color:var(--dim);font-size:17px;margin:0 0 18px;max-width:34em}
+.pitch{font:600 clamp(19px,2.6vw,24px)/1.35 var(--serif);margin:0 0 28px;max-width:26em}
+
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border-radius:12px;
+  border:1px solid #3a4246;background:var(--panel);color:var(--ink);font:700 15px var(--sans);text-decoration:none;
+  transition:transform .08s ease,border-color .15s}
+.btn:hover{border-color:var(--dim)}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#0d0f10}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.big{width:100%;min-height:56px;font-size:17px;border-radius:16px}
+.vercel{display:inline-flex;align-items:center;min-height:44px;border-radius:6px}
+.vercel img{display:block;height:32px;width:auto}
+
+.mobile-demo{display:none}
+.hint{color:var(--dim);font-size:14px;margin:10px 0 0;text-align:center}
+.phone{display:none}
+
+@media (max-width:899px){
+  .hero .actions .primary{display:none}
+  .mobile-demo{display:block;margin-bottom:20px}
+  .hero{padding-top:40px}
+}
+
+@media (min-width:900px){
+  .hero{grid-template-columns:1fr auto;gap:64px;min-height:min(100vh,860px);padding-block:40px}
+  .phone{display:block;width:calc(390px*var(--scale) + 24px);height:calc(844px*var(--scale) + 24px);
+    padding:12px;border-radius:52px;background:#050606;border:1px solid #2f363a;
+    box-shadow:0 0 0 2px #1a1e20,0 30px 80px rgba(0,0,0,.6),0 0 90px rgba(200,255,94,.07)}
+  .screen{width:calc(390px*var(--scale));height:calc(844px*var(--scale));border-radius:40px;overflow:hidden;background:var(--bg);position:relative}
+  .screen iframe{position:absolute;left:0;top:0;width:390px;height:844px;border:0;
+    transform:scale(var(--scale));transform-origin:0 0}
+}
+
+.section{max-width:1100px;margin:0 auto;padding:56px 24px}
+h2{font:600 clamp(28px,4vw,38px)/1.15 var(--serif);margin:0 0 28px;letter-spacing:-.01em}
+.grid{list-style:none;margin:0;padding:0;display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.grid li{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px}
+.grid .n{font:600 11px var(--mono);color:var(--accent);letter-spacing:.08em}
+.grid h3{font:600 20px/1.2 var(--serif);margin:10px 0 8px}
+.grid p{margin:0;color:var(--dim);font-size:14.5px}
+
+.strip{display:flex;gap:16px;overflow-x:auto;padding-bottom:14px;scroll-snap-type:x proximity}
+.strip figure{margin:0;flex:0 0 auto;width:min(240px,62vw);scroll-snap-align:start}
+.strip img{display:block;width:100%;height:auto;border-radius:22px;border:1px solid var(--line);background:var(--panel)}
+.strip figcaption{font:600 12px var(--mono);color:var(--dim);margin-top:8px;text-align:center}
+
+.cta{text-align:center}
+.cta p{color:var(--dim);margin:-12px 0 24px}
+.cta .actions{justify-content:center}
+
+footer{border-top:1px solid var(--line);padding:32px 24px 48px;text-align:center;color:var(--dim);font-size:14px}
+footer p{margin:4px 0}
+footer a{text-decoration:underline;text-underline-offset:3px}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important}
+}

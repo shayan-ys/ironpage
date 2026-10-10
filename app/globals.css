@@ -1,0 +1,492 @@
+:root{
+  --bg:#0d0f10; --panel:#15181a; --panel2:#1c2023; --line:#262b2e;
+  --ink:#eef2f3; --dim:#8b979c; --faint:#5c676b;
+  --accent:#c8ff5e; --accent2:#7de0ff;
+  --hot:#ff6b5e; --warm:#ffb84d; --cool:#7de0ff; --full:#c8ff5e; --max:#ff3b30;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,monospace;
+  --sans:-apple-system,system-ui,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  -webkit-text-size-adjust:100%;overscroll-behavior-y:none}
+body{max-width:460px;margin:0 auto;min-height:100dvh}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+
+/* ---------- Overview ---------- */
+.wrap{position:relative;padding:26px 20px 40px}
+.kicker{font:600 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+h1.title{font:600 32px/1.08 var(--serif);margin:10px 0 4px;letter-spacing:-.01em}
+.subtle{color:var(--dim);font-size:13.5px}
+
+.resume{margin:20px 0 6px;background:linear-gradient(180deg,#20261a,#171a12);
+  border:1px solid #37432a;border-radius:18px;padding:16px 17px;display:flex;
+  align-items:center;justify-content:space-between;gap:12px}
+.resume .txt .l{font:600 15px var(--sans);color:var(--accent)}
+.resume .txt .s{font-size:12.5px;color:var(--dim);margin-top:2px}
+.resume .go{background:var(--accent);color:#0d0f10;border:none;border-radius:12px;
+  padding:12px 16px;font:700 14px var(--sans);white-space:nowrap}
+.resume .discard{display:block;background:transparent;border:none;color:var(--faint);
+  font:600 12px var(--sans);padding:8px 0 2px;margin-top:4px;text-align:left}
+
+.daygrid{display:flex;flex-direction:column;gap:14px;margin-top:22px}
+.daycard{width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);
+  border-radius:20px;padding:18px 18px 16px;color:var(--ink);transition:transform .08s ease}
+.daycard:active{transform:scale(.985)}
+.daycard[disabled]{opacity:.55}
+.daycard .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.daycard h2{font:600 22px var(--serif);margin:0}
+.daycard .count{font:600 11px var(--mono);color:var(--faint)}
+.daycard .exlist{display:flex;flex-wrap:wrap;gap:6px}
+.daycard .ex{font:600 11.5px var(--mono);background:var(--panel2);border:1px solid var(--line);
+  border-radius:8px;padding:5px 9px;color:var(--dim)}
+.daycard .start{margin-top:14px;font:700 13px var(--sans);color:var(--accent);display:flex;
+  align-items:center;gap:6px}
+.daycard.recent{opacity:.5}
+.daycard.recent .start{color:var(--dim)}
+.daycard .lastdone{margin-top:10px;font:600 11px var(--mono);color:var(--faint);
+  letter-spacing:.02em;text-transform:uppercase}
+.daycard.recent .lastdone{color:var(--warm)}
+.daycard .readyhint{margin-top:6px;font:600 11px var(--mono);color:var(--dim);letter-spacing:.02em}
+
+/* First run: starter picker. Reuses the day card look; the card is a section
+   with its own "Use this program" button, so it does not scale on press. */
+.unitswitch{display:inline-flex;margin-top:18px;border:1px solid var(--line);border-radius:12px;
+  padding:3px;background:var(--panel)}
+.unitswitch button{border:none;background:transparent;color:var(--dim);border-radius:9px;
+  padding:8px 18px;font:700 13px var(--mono)}
+.unitswitch button.on{background:var(--accent);color:#0d0f10}
+.startercard:active{transform:none}
+.startercard .startersum{margin:0 0 12px;color:var(--dim);font:500 13.5px/1.45 var(--sans)}
+.startercard .starteruse{margin-top:16px;padding:13px;font-size:15px;border-radius:13px}
+.starterown{margin-top:22px;text-align:center}
+.starterown a{color:var(--accent);font-weight:600}
+
+/* Header buttons (optional Coach link, readiness), pinned to the header's
+   top-right corner. Coach shows only when NEXT_PUBLIC_COACH_URL is set. Sized
+   like the exercise tools: Coach takes the Form tile's 44px rounded square,
+   the body icon takes the notes button's 44px circle. */
+.headactions{position:absolute;top:12px;right:14px;display:flex;align-items:center;gap:12px}
+.recoverylink{display:grid;place-items:center;width:44px;height:44px;border:1px solid #3a4246;
+  border-radius:999px;color:var(--dim)}
+.recoverylink svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.recoverylink svg circle{fill:currentColor;stroke:none}
+/* The page fills the screen so a tap anywhere beside the body clears the selection. */
+.recoverypage{min-height:100dvh}
+.recovery{padding:10px 20px 40px;display:flex;flex-direction:column;align-items:center}
+.recovery > div{width:100%;max-width:480px}
+.recovery-pick{min-height:2.6em;margin:12px 0 0;text-align:center;font:600 13px/1.3 var(--mono);color:var(--ink)}
+.recovery-detail{margin:6px 0 0;text-align:center;font:500 12px/1.4 var(--sans);color:var(--faint)}
+/* z-index: above the tap layer PinchZoom lays over the map (`hapticZoneRef`). */
+.zoomreset{position:absolute;z-index:1;top:6px;right:6px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;
+  background:var(--panel);color:var(--dim);font:600 11px/1 var(--sans)}
+
+/* ---------- Session ---------- */
+.shead{position:relative;padding:22px 20px 6px}
+.shead .back{font:600 12px var(--sans);color:var(--faint);margin-bottom:12px;display:inline-block}
+.shead .title-row{display:flex;align-items:center;gap:10px;margin:6px 0 2px}
+.shead .title-row h1{flex:0 1 auto;min-width:0}
+.shead h1{font:600 28px/1.1 var(--serif);margin:0}
+.shead .coachpill{width:44px;height:44px;display:grid;place-items:center;align-content:center;gap:2px;padding:0;
+  border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--dim);line-height:1}
+.shead .coachpill svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.shead .coachpill b{font:800 8.5px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase}
+/* Pinned session progress: thin bar + one line of numbers, ~22px total.
+
+   padding-top carries the safe-area inset rather than `top` doing it: the
+   manifest is `display:standalone` with a translucent status bar, so in the
+   installed PWA the page runs under the Dynamic Island. Offsetting `top`
+   instead would pin the strip below the island but leave a live gap above it
+   with content scrolling through; padding makes the strip's own background
+   fill that space. In Safari the inset is 0 and this collapses to top:0. */
+.progresswrap{position:sticky;top:0;z-index:20;background:var(--bg);
+  padding:0 0 5px;padding-top:env(safe-area-inset-top);
+  border-bottom:1px solid var(--line)}
+.progress{margin:8px 20px 0;height:3px;background:var(--line);border-radius:3px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .3s ease}
+.progresstxt{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  padding:4px 20px 0;font:600 10px var(--mono);color:var(--faint)}
+.syncst{font:600 10px var(--sans);letter-spacing:.04em;white-space:nowrap}
+.syncst.saved{color:var(--faint)}
+.syncst.saving{color:var(--accent2)}
+.syncst.offline{color:var(--warm)}
+
+/* ---------- Warm-up card ---------- */
+.warmup{margin:16px 20px 0;background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:4px 16px;overflow:hidden;transition:opacity .15s ease}
+/* Ticked off: folded away and dimmed like a completed set, but still reachable. */
+.warmup.done{opacity:.45}
+.wu-head{display:flex;align-items:center;gap:10px;padding:8px 0}
+.wu-toggle{flex:1;min-width:0;display:flex;align-items:baseline;gap:9px;padding:6px 0;
+  background:transparent;border:none;text-align:left;user-select:none}
+.wu-check{width:44px;height:40px;flex:0 0 auto;font-size:18px}
+.warmup.done .wu-check{background:var(--accent);color:#0d0f10;border-color:var(--accent)}
+.warmup:not(.open) .wu-chevron{transform:rotate(-90deg)}
+.warmup .wu-title{font:600 13px var(--sans);letter-spacing:.02em;color:var(--accent)}
+.warmup .wu-sub{font:600 11px var(--mono);color:var(--faint)}
+.warmup .wu-chevron{margin-left:auto;color:var(--faint);font-size:12px;transition:transform .2s ease}
+.warmup .wu-list{list-style:none;margin:0;padding:0 0 12px;display:flex;flex-direction:column;gap:10px}
+.warmup .wu-list li{border-top:1px solid var(--line);padding-top:10px}
+.warmup .wu-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.warmup .wu-name{font:600 14px var(--sans);color:var(--ink)}
+.warmup .wu-dose{font:600 12px var(--mono);color:var(--accent2);white-space:nowrap;flex:0 0 auto}
+.warmup .wu-why{font:500 11.5px/1.35 var(--sans);color:var(--dim);margin-top:2px}
+
+.exwrap{padding:0 20px 8px}
+.ex{border-top:1px solid var(--line);padding:16px 0 4px}
+.ex.first{border-top:none}
+.ex.exskip{opacity:.5}
+/* Exercise header: the name takes the free width; form and notes are thumb-sized
+   buttons at its top right; the seed/estimate hint sits right-aligned below. */
+.ex .exhead{display:flex;align-items:flex-start;gap:12px;margin:0 0 6px}
+.ex .exname{flex:1;min-width:0;font:600 20px/1.2 var(--serif);margin:0;padding-top:10px}
+.ex .extools{display:flex;gap:12px;flex:0 0 auto}
+.ex .extool{width:44px;height:44px;display:grid;place-items:center;align-content:center;padding:0;border-radius:12px;
+  border:1px solid var(--line);line-height:1;transition:transform .08s ease,background .12s ease}
+.ex .extool svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ex .extool:active{transform:scale(.94)}
+/* Form: a play-on-screen icon over a "FORM" caption, so it never reads as "start". */
+.ex .formvid{color:var(--accent);background:var(--panel2);gap:2px}
+.ex .formvid svg{width:20px;height:20px}
+.ex .formvid b{font:800 8.5px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.ex .formvid:active{background:#20261a}
+.ex .notespill{background:transparent;color:var(--dim);border-color:#3a4246;border-radius:999px}
+.ex .notespill.has-last{color:var(--accent2);border-color:#2b3d45}
+.ex .hint{font:500 11.5px/1.3 var(--sans);color:var(--faint);text-align:right;margin:-2px 0 8px}
+.ex .hint.guess{color:var(--accent2);font-style:italic}
+.ex .exmeta{color:var(--faint);font-size:11.5px;margin:2px 0 12px}
+
+.sets{display:flex;flex-direction:column;gap:7px}
+
+/* set row */
+.setwrap{position:relative}
+.set{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:8px 11px;transition:background .15s ease,border-color .15s ease,opacity .15s ease}
+.set.done{background:var(--panel2);border-color:#2b3324;opacity:.42}
+/* The open set stays legible even once ticked — that's the set you're rating.
+   A done-but-closed set keeps the dim, slider and all. */
+.set.active,.set.done.active{opacity:1;border-color:var(--accent2)}
+.set.skipped{display:grid;grid-template-columns:30px 1fr;align-items:center;gap:8px;
+  background:#1a1416;border-color:#3a2226;opacity:.85}
+.setmain{display:grid;grid-template-columns:28px 1fr 1fr 54px;align-items:center;gap:7px}
+.set .n{font:600 13px var(--mono);color:var(--faint);text-align:center}
+.set .skipped-lbl{grid-column:2;font:600 12px var(--sans);color:var(--hot)}
+/* RPE intensity palette, keyed by value through data-rpe on every RPE control,
+   chip and legend digit: 10 red, cooling through orange, amber and green to
+   blue at 6. Each hue is bright enough for dark text on a solid fill (selected
+   stop, ≥5.4:1) and --rpe-ink, the hue lifted toward --ink, stays ≥4.6:1 on
+   the dark panels and the tinted unselected stops (labels; the RPE chip is
+   neutral and colours only its digit). */
+[data-rpe]{--rpe-ink:color-mix(in srgb,var(--rpe) 80%,var(--ink))}
+[data-rpe="6"]{--rpe:#5cc8e6}
+[data-rpe="7"]{--rpe:#4fd68a}
+[data-rpe="8"]{--rpe:#ffc83d}
+[data-rpe="9"]{--rpe:#ff8a3d}
+[data-rpe="10"]{--rpe:var(--max)}
+/* Exercise RPE row. One rating for the whole lift, so it sits under the sets
+   rather than inside each one. Fixed height, with the chip and the slider
+   swapping inside it — identical geometry in both states, so opening or
+   closing it never moves anything else on the page.
+
+   The chip fills the whole row: it is what you aim at, not a little pill on
+   its left. Widening it is safe precisely because of the two-step — a stray
+   tap here only reveals the slider, it cannot change a logged score the way a
+   bare wide slider could. */
+.exrpe{height:34px;display:flex;align-items:center;margin-top:8px;padding-top:6px;
+  border-top:1px dashed var(--line)}
+/* Neutral chip, logged or target: only the digit carries the RPE colour. */
+.rpechip{flex:1;min-width:0;align-self:stretch;display:flex;align-items:center;gap:6px;
+  padding:4px 10px;text-align:left;border-radius:9px;
+  background:var(--panel2);border:1px solid var(--line)}
+.rpechip:active{background:var(--panel)}
+.rpechip .k{font:600 9px var(--sans);letter-spacing:.12em;color:var(--faint)}
+.rpechip .v{font:700 14px var(--mono);color:var(--rpe-ink)}
+.rpechip .t{margin-left:auto;font:600 9px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+
+.fld{display:flex;flex-direction:column;min-width:0}
+.fld label{font:600 9px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.wt{background:transparent;border:none;color:var(--ink);font:600 22px var(--mono);width:100%;padding:2px 0;outline:none}
+.wt:focus{color:var(--accent)}
+.repsel{-webkit-appearance:none;appearance:none;background:transparent;border:none;color:var(--ink);
+  font:600 22px var(--mono);padding:2px 0;outline:none;width:100%}
+
+.check{position:relative;overflow:hidden;justify-self:end;width:50px;height:46px;border-radius:12px;
+  border:1.5px solid var(--line);background:var(--panel2);display:grid;place-items:center;
+  font-size:20px;color:var(--faint)}
+.set.done .check{background:var(--accent);color:#0d0f10;border-color:var(--accent)}
+.check .chk-switch{position:absolute;left:50%;top:50%;margin:0;opacity:0;cursor:pointer;
+  transform:translate(-50%,-50%) scale(2.6)}
+.check .chk-mark{pointer-events:none;line-height:1}
+.check.check-flash{animation:check-flash .45s ease-out}
+@keyframes check-flash{
+  0%{box-shadow:0 0 0 0 rgba(125,255,160,.9)}
+  100%{box-shadow:0 0 0 12px rgba(125,255,160,0)}
+}
+
+/* Five switch-backed RPE stops fit within the exercise's fixed-height row. */
+.rpe{display:flex;align-items:center;gap:9px;width:100%}
+.rpe .k{flex:0 0 auto;font:600 9px var(--sans);letter-spacing:.12em;color:var(--faint)}
+.rpe-stops{flex:1;min-width:0;height:26px;display:flex;gap:6px}
+.rpe-stop{position:relative;flex:1;min-width:0;height:26px;overflow:hidden;display:grid;place-items:center;
+  border:1px solid color-mix(in srgb,var(--rpe) 38%,var(--line));border-radius:7px;
+  background:color-mix(in srgb,var(--rpe) 13%,var(--panel2));color:var(--rpe-ink);
+  font:700 14px var(--mono)}
+.rpe-stop.selected{border-color:var(--rpe);background:var(--rpe);color:#0d0f10}
+.rpe-switch{position:absolute;left:50%;top:50%;margin:0;opacity:0;cursor:pointer;
+  transform:translate(-50%,-50%) scale(2.2)}
+
+/* Ramp sets: same geometry as a working set, amber instead of green so the two
+   never get confused at a glance mid-lift. Amber is unused elsewhere on a set
+   row, and the tint survives the cyan "open" border and the done-state dim. */
+.set.warm{border-color:#4a3a1c;background:#17130d}
+.set.warm .n{color:var(--warm)}
+.set.warm .wt,.set.warm .repsel{color:var(--warm)}
+.set.warm .wt:focus{color:var(--accent)}
+.set.warm.done .check{background:var(--warm);border-color:var(--warm)}
+/* Remove control for a ramp row. It rides at the end of the main row, past the
+   done switch, where there is nothing else to fat-finger. Only ramp rows get
+   one, so only they need the extra column. */
+.set.warm .setmain{grid-template-columns:28px 1fr 1fr 54px 26px}
+.rmwarm{width:26px;height:26px;padding:0;background:transparent;border:none;
+  color:var(--faint);font:600 17px/1 var(--sans)}
+.rmwarm:active{color:var(--hot)}
+/* Timed exercise rows (components/SetRow.tsx): a 42 px ▶ sits in the seconds
+   column beside the hold length it runs. The columns are unchanged and it is
+   no taller than the done switch, so the row keeps its fixed height. */
+.holdcell{display:flex;align-items:center;gap:6px;min-width:0}
+.holdcell .fld{flex:1;min-width:0}
+.holdstart{flex:none;width:42px;height:42px;padding:0;display:grid;place-items:center;border-radius:12px;
+  border:1.5px solid var(--accent);background:transparent;color:var(--accent)}
+.holdstart svg{width:20px;height:20px;fill:currentColor}
+.holdstart:active{background:#20261a}
+.holdstart[disabled]{border-color:var(--line);color:var(--faint)}
+.set.warm .holdstart:not([disabled]){border-color:var(--warm);color:var(--warm)}
+
+/* RPE scale reference: one static block at the foot of the page — not sticky,
+   not repeated under every set. */
+.rpelegend{margin:4px 20px 0;padding:13px 15px;background:var(--panel);
+  border:1px solid var(--line);border-radius:14px}
+.rpelegend .lgd-h{font:600 9px var(--sans);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:9px}
+.rpelegend dl{margin:0;display:flex;flex-direction:column;gap:5px}
+.rpelegend dl>div{display:flex;align-items:baseline;gap:10px}
+.rpelegend dt{flex:0 0 auto;min-width:15px;font:700 12px var(--mono);color:var(--rpe-ink)}
+.rpelegend dd{margin:0;font:500 11.5px/1.35 var(--sans);color:var(--dim)}
+
+.addrow{display:flex;gap:8px;margin-top:8px}
+.addset{flex:1;width:100%;border:1px dashed var(--line);background:transparent;
+  color:var(--dim);border-radius:12px;padding:10px;font:600 13px var(--sans)}
+.addset.warm{border-color:#3a2f18;color:var(--warm)}
+.skipex{margin-top:6px;width:100%;background:transparent;border:none;color:var(--faint);font:600 12px var(--sans);padding:6px}
+
+/* ---------- Bottom sheet (components/Sheet.tsx, Base UI Drawer) ----------
+   Slides up in 180 ms; while swiped it follows the finger (--drawer-swipe-*),
+   and a release slides it out or springs it back. */
+.scrim{position:fixed;inset:0;background:rgba(6,8,9,.72);backdrop-filter:blur(6px);z-index:50;
+  opacity:calc(1 - var(--drawer-swipe-progress,0));transition:opacity 180ms ease-out}
+.scrim[data-starting-style],.scrim[data-ending-style]{opacity:0}
+.scrim[data-swiping]{transition-duration:0ms}
+.sheetport{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;
+  pointer-events:none}
+.sheet{position:relative;pointer-events:auto;max-width:460px;width:100%;background:var(--panel2);
+  border-top:1px solid var(--line);border-radius:26px 26px 0 0;
+  padding:26px 22px calc(26px + env(safe-area-inset-bottom));
+  transform:translateY(var(--drawer-swipe-movement-y,0px));
+  transition:transform calc(180ms * var(--drawer-swipe-strength,1)) cubic-bezier(.32,.72,0,1)}
+.sheet[data-starting-style],.sheet[data-ending-style]{transform:translateY(100%)}
+.sheet[data-swiping]{transition-duration:0ms}
+/* A running rest's Skip sits above the open sheet; keep the sheet's buttons clear of it. */
+.sheetportal:has(.rest-skip) .sheet{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+.sheetclose{position:absolute;top:14px;right:16px;width:36px;height:36px;border-radius:10px;
+  border:1px solid var(--line);background:var(--panel);color:var(--dim);font-size:20px;line-height:1}
+.sheet h2{font:600 25px var(--serif);margin:0 0 4px;text-align:center}
+.sheet p{color:var(--dim);font-size:13px;text-align:center;margin:0 0 20px}
+.faces{display:flex;gap:12px;justify-content:center;margin-bottom:22px}
+.face{flex:1;height:74px;border-radius:16px;border:1px solid var(--line);background:var(--panel);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:30px}
+.face span{font:600 10px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.face.sel{border-color:var(--accent);background:#20261a;transform:translateY(-3px)}
+.save{width:100%;background:var(--accent);color:#0d0f10;border:none;border-radius:15px;padding:16px;font:700 16px var(--sans)}
+.save[disabled]{opacity:.4}
+
+/* confirm sheet */
+.sheet.confirm h2{font-size:22px}
+.confirmrow{display:flex;gap:12px;margin-top:4px}
+.confirmrow button{flex:1;border-radius:14px;padding:15px;font:700 15px var(--sans)}
+.confirmrow .cancel{background:var(--panel);border:1px solid var(--line);color:var(--dim)}
+.confirmrow .danger{background:#4a1a1e;border:1px solid #6a2429;color:#ff8a8f}
+.confirmrow .danger:active{background:#5a2024}
+
+/* Session exits. Two buttons, deliberately different weights: pausing is the
+   cheap, reversible one and sits narrow on the left; ending the session closes
+   the record and takes the rest of the row. */
+.finishbar{display:grid;grid-template-columns:auto 1fr;gap:10px;
+  padding:14px 20px calc(28px + env(safe-area-inset-bottom))}
+.finishbar button{width:100%;background:var(--panel2);color:var(--dim);border:1px solid var(--line);
+  border-radius:15px;padding:16px;font:700 16px var(--sans)}
+.finishbar button:active{background:var(--panel)}
+.finishbar .pausebtn{padding:16px 20px;color:var(--accent2);border-color:#2b3d45}
+.finishbar button[disabled]{opacity:.55}
+
+/* "not done for the day — pause instead", under the sheet's primary action */
+.sheetalt{display:block;width:100%;margin-top:10px;background:transparent;border:none;
+  color:var(--accent2);font:600 13px var(--sans);padding:6px 2px}
+.sheetalt:active{opacity:.6}
+
+/* a start that needed the network and did not get it */
+.cardwarn{margin:8px 2px 0;color:var(--warm);font:500 12.5px/1.45 var(--sans)}
+
+.centered{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;text-align:center}
+
+/* exercise: previous-session reference, user note, how-to popover, completion */
+.lastrow{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:0 2px 8px}
+.lastrow .k{font:600 9px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.lastrow .cell{font:600 11px var(--mono);color:var(--dim);background:var(--panel);
+  border:1px solid var(--line);border-radius:7px;padding:3px 7px}
+/* How hard it was last time. One rating for the lift, so it trails the loads
+   rather than sitting inside them. */
+.lastrow .cell.atrpe{color:var(--rpe-ink);border-color:color-mix(in srgb,var(--rpe) 38%,var(--line))}
+/* 16px is not a style choice here: iOS Safari zooms the viewport whenever a
+   focused text field is under 16px, and it does not zoom back out on blur —
+   you're left pinching the whole app back to size after every note. 15px and
+   below trigger it, 16px and above don't. Line-height and padding are trimmed
+   to claw back the height the larger type costs.
+   https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/ */
+.usernote{display:block;width:100%;margin-top:8px;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;color:var(--ink);font:500 16px/1.3 var(--sans);padding:8px 11px;resize:none;outline:none}
+.usernote:focus{border-color:var(--accent2)}
+.usernote::placeholder{color:var(--faint)}
+.addnote{margin-top:8px;background:transparent;border:none;color:var(--faint);font:600 12px var(--sans);padding:4px 2px}
+/* notes sheet (components/NotesSheet.tsx): the sheet grows to 85% of the screen,
+   then its body scrolls inside it */
+.sheet.notes{max-height:85dvh;display:flex;flex-direction:column}
+.sheet.notes h2{font-size:22px;padding:0 44px}
+.notesbody{flex:0 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin-top:14px;text-align:left}
+.notepart + .notepart{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.notepart h3{margin:0 0 8px;font:700 11px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
+  display:flex;gap:8px;align-items:baseline}
+.notepart h3 .when{letter-spacing:.04em;text-transform:none;font-weight:600}
+.notepart.last h3{color:var(--accent2)}
+.sheet .notepart p{margin:0;text-align:left;color:var(--ink);font:500 16.5px/1.5 var(--sans);white-space:pre-wrap}
+/* program note rows: one label column sized to the longest free label */
+.noterows{margin:0;display:grid;grid-template-columns:auto 1fr;gap:18px 14px;align-items:baseline;text-align:left}
+.noterows div{display:contents}
+.noterows dt{font:700 11px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.noterows dd{margin:0;color:var(--ink);font:600 17px/1.4 var(--sans)}
+.notebullets{margin:0;padding:0 0 0 1.1em;display:flex;flex-direction:column;gap:6px}
+.notebullets li::marker{color:var(--faint)}
+.noterows .weeks{display:flex;gap:6px;flex-wrap:wrap}
+.weeks span{display:flex;flex-direction:column;align-items:center;min-width:44px;padding:3px 6px 4px;border-radius:8px;
+  border:1px solid var(--line);font:700 17px/1.1 var(--mono);color:var(--ink)}
+.weeks span small{font:700 10px var(--sans);letter-spacing:.1em;color:var(--faint);margin-bottom:2px}
+.weeks span i{font-style:normal;font-weight:600;font-size:13px;color:var(--dim)}
+.weeks span.past{opacity:.4}
+.weeks span.now{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.weeks span.now small{color:var(--accent)}
+/* worked muscles atop the notes sheet (components/MuscleFocus.tsx): a short frame
+   the SVG crops into; the focus pulses only after the 180 ms slide-up */
+.musclefocus{margin:0;position:relative}
+/* which side of the body: large faint word at the frame's right, behind nothing tappable */
+.musclefocus .side{position:absolute;z-index:1;right:16px;top:66px;transform:translateY(-50%);pointer-events:none;
+  font:800 30px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);opacity:.08}
+.musclefocus svg{display:block;width:100%;height:132px;background:var(--bg);border-radius:12px}
+.musclefocus path{fill:var(--line);stroke:var(--bg);stroke-width:1.5;stroke-linejoin:round}
+.musclefocus path.minor{fill:var(--accent)}
+.musclefocus .focus path{fill:var(--accent);stroke:var(--bg);animation:musclepulse 2.4s ease-in-out 200ms infinite}
+@keyframes musclepulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.musclefocus .focus path{animation:none}}
+.musclefocus figcaption{margin-top:8px;font:700 11px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:center}
+.ex.done .exname{color:var(--dim)}
+.ex.done .exname::after{content:" ✓";color:var(--accent)}
+
+/* apply-to-later-sets (non-destructive) confirm button */
+.confirmrow .apply{background:#20261a;border:1px solid #3a5320;color:var(--accent)}
+.confirmrow .apply:active{background:#28311f}
+
+/* ---------- Login ---------- */
+.login{padding:60px 24px}
+.login form{margin-top:24px;display:flex;flex-direction:column;gap:12px}
+.login input{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px;
+  color:var(--ink);font:600 16px var(--sans);outline:none}
+.login input:focus{border-color:var(--accent)}
+.login input.err{border-color:var(--hot)}
+.loginerr{color:var(--hot);font:600 12px var(--sans)}
+
+.warmup .wu-note{margin:12px 0 4px;padding-top:11px;border-top:1px solid var(--line);
+  font:600 11.5px/1.4 var(--sans);color:var(--accent2)}
+.confirmcol{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.dangerbtn{width:100%;background:#4a1a1e;border:1px solid #6a2429;color:#ff8a8f;border-radius:15px;
+  padding:16px;font:700 15px var(--sans)}
+.dangerbtn:active{background:#5a2024}
+
+/* Superset frame. The frame is the
+   only box around .ex sections; the first member drops its own top border. */
+.superset-frame{position:relative;margin:12px 0 4px;padding:0 12px;border:1px solid #37432a;border-radius:16px}
+.superset-frame > .ex:first-child{border-top:none}
+.superset-frame--lit{border:1.5px solid var(--accent);background:#20261a}
+.superset-frame--done{border-color:#2b3324}
+.superset-link{position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:22px;height:22px;
+  display:grid;place-items:center;background:var(--bg);color:#37432a}
+.superset-frame--lit .superset-link{background:#20261a;color:var(--accent)}
+.superset-frame--done .superset-link{color:var(--faint)}
+.superset-link svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Jump-to-current-set pill (components/CurrentSetPill.tsx). Up: just under the sticky
+   progress bar (top set inline from its measured bottom). Down: above the rest bar's
+   time pill. Centred, so it never meets the right-hand Skip button. Below sheets (z 50). */
+.setpill{position:fixed;left:50%;transform:translateX(-50%);z-index:30;width:48px;height:32px;
+  display:flex;align-items:center;justify-content:center;border:none;border-radius:999px;
+  background:var(--accent);color:#0d0f10;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.setpill--down{bottom:calc(env(safe-area-inset-bottom) + 44px)}
+.setpill svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.setpill:active{filter:brightness(.85)}
+
+/* Rest countdown.
+   Fill and label are driven per frame from one clock in RestExperience. The layers sit
+   above an open sheet (z 50), inside its portal (components/Sheet.tsx). */
+/* The time pill sits centred on the bar line. --rest-bar-lift raises the bar so the
+   pill's lower half (about 11 px below the bar) still clears the safe area by ~6 px. */
+.restbar{--rest-bar-lift:18px;position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + var(--rest-bar-lift));height:5px;z-index:52;
+  pointer-events:none;background:color-mix(in srgb,var(--warm) 18%,transparent)}
+.restbar-fill{position:absolute;inset:0;background:var(--warm);transform-origin:left center;will-change:transform}
+.restbar-time{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:2px 9px;border-radius:999px;
+  background:var(--bg);border:1.5px solid var(--warm);color:var(--warm);font:700 17px/1.2 var(--mono);
+  font-variant-numeric:tabular-nums}
+.rest-skip{position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom) + 24px);z-index:53;width:72px;height:72px;
+  border:none;border-radius:16px;background:var(--warm);color:#0d0f10;font:700 16px var(--sans)}
+.rest-flash{position:fixed;inset:0;z-index:60;pointer-events:none;background:var(--warm);opacity:0;
+  animation:rest-flash 450ms ease-in-out infinite}
+@keyframes rest-flash{0%,100%{opacity:0}50%{opacity:.9}}
+.rest-capture{position:fixed;inset:0;z-index:70;border-radius:0;background:transparent;touch-action:none}
+/* Hold countdown (components/HoldTimer.tsx): an opaque face above the rest bar and
+   Skip (z 52–53), below the end flash (60) and the capture layer (70) that owns
+   every touch. No flashing while it counts. */
+.hold{position:fixed;inset:0;z-index:58;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);background:var(--bg);text-align:center}
+.hold-time{font:700 min(36vw,200px)/1 var(--mono);color:var(--accent);font-variant-numeric:tabular-nums}
+.hold-what{font:600 17px/1.3 var(--sans);color:var(--ink)}
+.hold-hint{font:600 11px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+
+/* ---------- Settings ---------- */
+.settings{padding-bottom:40px}
+.set-status{margin:10px 20px 0;font:600 13px/1.4 var(--sans);color:var(--accent2)}
+.set-section{margin:18px 20px 0;padding-top:16px;border-top:1px solid var(--line)}
+.set-section h2{font:600 20px var(--serif);margin:0 0 6px}
+.set-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.set-btn,.set-link{display:inline-block;min-height:44px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;
+  background:var(--panel2);color:var(--ink);font:600 14px var(--sans)}
+.set-btn[disabled]{opacity:.5}
+.set-chip{min-width:72px;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:999px;
+  background:transparent;color:var(--dim);font:600 14px var(--sans)}
+.set-chip.on{background:var(--accent);border-color:var(--accent);color:#0d0f10}
+.set-panel{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.set-starter{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left;padding:14px 16px;
+  border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--ink);font:500 13px/1.4 var(--sans)}
+.set-starter b{font:600 17px var(--serif)}
+.set-starter span{color:var(--dim)}
+/* 16px: smaller text makes iOS Safari zoom on focus (see AGENTS.md). */
+.set-json{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);
+  color:var(--ink);font:16px/1.4 var(--mono)}
+.set-errors{margin:12px 0 0;padding:12px 12px 12px 28px;border:1px solid #5a2a26;border-radius:12px;
+  color:var(--hot);font:500 12.5px/1.45 var(--mono);overflow-wrap:anywhere}

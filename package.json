@@ -1,0 +1,60 @@
+{
+  "name": "ironpage",
+  "displayName": "Ironpage",
+  "version": "1.0.0",
+  "description": "Your lifting log, on your Home Screen. An offline-first workout tracker PWA you host yourself.",
+  "keywords": [
+    "workout",
+    "gym",
+    "fitness",
+    "pwa",
+    "nextjs",
+    "offline-first",
+    "self-hosted"
+  ],
+  "author": "Shayan Yousefian",
+  "private": true,
+  "license": "MIT",
+  "homepage": "https://shayan-ys.github.io/ironpage/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shayan-ys/ironpage.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shayan-ys/ironpage/issues"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "demo:build": "node scripts/demo.mjs",
+    "demo:serve": "node scripts/demo.mjs --serve",
+    "deploy-url": "node scripts/deploy-url.mjs"
+  },
+  "dependencies": {
+    "@base-ui/react": "1.8.0",
+    "@vercel/blob": "^2.6.1",
+    "canvas-confetti": "^1.9.4",
+    "next": "^15.1.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.6",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "ajv": "^6.15.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.24",
+    "happy-dom": "^20.11.1",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.10"
+  }
+}

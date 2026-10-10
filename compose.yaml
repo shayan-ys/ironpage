@@ -1,0 +1,34 @@
+# Run Ironpage on your own machine or server:
+#
+#   GYM_SECRET='a long random password' docker compose up -d --build
+#
+# Data is kept in the named volume "ironpage-data" (JSON files under /app/.data), so
+# it survives rebuilds and `docker compose down`. `docker compose down -v`
+# deletes it.
+#
+# Put a TLS-terminating reverse proxy in front of this port: iPhone installs and
+# offline use need HTTPS, and the login cookie is marked Secure only over HTTPS.
+# Plain HTTP on your LAN works for a quick try-out.
+services:
+  ironpage:
+    build:
+      context: .
+      args:
+        # Optional. Compiled into the app at build time. See .env.example.
+        NEXT_PUBLIC_COACH_URL: ${NEXT_PUBLIC_COACH_URL:-}
+    image: ironpage
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      # Required. `:?` stops compose from starting an open, unauthenticated app.
+      GYM_SECRET: ${GYM_SECRET:?Set GYM_SECRET to a long random password}
+      # Optional read-only secret for GET /api/session/<id> and GET /api/program.
+      GYM_READ_SECRET: ${GYM_READ_SECRET:-}
+      # Leave empty to store data in the volume. Set it to use Vercel Blob.
+      BLOB_READ_WRITE_TOKEN: ${BLOB_READ_WRITE_TOKEN:-}
+    volumes:
+      - ironpage-data:/app/.data
+
+volumes:
+  ironpage-data:

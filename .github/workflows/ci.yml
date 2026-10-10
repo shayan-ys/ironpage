@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      # Empty storage variables select the file-system backend and turn the
+      # login gate off, so the build needs no secrets.
+      - name: Build
+        run: npm run build
+        env:
+          BLOB_READ_WRITE_TOKEN: ""
+          GYM_SECRET: ""
+          GYM_READ_SECRET: ""

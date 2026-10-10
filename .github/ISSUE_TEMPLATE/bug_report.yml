@@ -1,0 +1,80 @@
+name: Bug report
+description: Something does not work, or a workout was saved wrong.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please do not paste your `GYM_SECRET`, Blob token, or a full data export. For a security problem, use private vulnerability reporting instead (see SECURITY.md).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what you saw instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the overview
+        2. Start a session
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      placeholder: iPhone 15, Pixel 8, MacBook
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: iOS or Android version
+      description: For a desktop browser, give the operating system and version.
+      placeholder: iOS 26.5
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: Safari, Chrome, Firefox
+    validations:
+      required: true
+  - type: dropdown
+    id: installed
+    attributes:
+      label: Installed to the Home Screen?
+      description: The installed app (standalone mode) and a browser tab behave differently on iOS.
+      options:
+        - "Yes, running from the Home Screen"
+        - "No, in a browser tab"
+    validations:
+      required: true
+  - type: dropdown
+    id: storage
+    attributes:
+      label: Storage backend
+      options:
+        - Vercel Blob
+        - Local files (.data/)
+        - Docker volume
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: The release number, or the commit you deployed.
+  - type: checkboxes
+    id: offline
+    attributes:
+      label: Context
+      options:
+        - label: It happened while offline or on a weak connection
+        - label: A workout was lost or changed
