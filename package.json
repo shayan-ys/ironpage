@@ -15,7 +15,7 @@
   "author": "Shayan Yousefian",
   "private": true,
   "license": "MIT",
-  "homepage": "https://shayan-ys.github.io/ironpage/",
+  "homepage": "https://ironpage-demo.vercel.app/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shayan-ys/ironpage.git"

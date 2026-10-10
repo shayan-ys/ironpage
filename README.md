@@ -21,7 +21,7 @@ volume. Pick a day, tick sets as you go, rest on a timer, and see a muscle map
 when you finish. Because the program is one JSON document behind a small API,
 an AI assistant can read your log and write your next program.
 
-- **[Try the demo](https://shayan-ys.github.io/ironpage/demo/)**. Best on a
+- **[Try the demo](https://ironpage-demo.vercel.app/demo/)**. Best on a
   phone. It runs entirely in your browser, and its data stays there.
 - **Deploy your own** on Vercel with one click:
 
