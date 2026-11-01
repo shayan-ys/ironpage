@@ -37,24 +37,24 @@
     "deploy-url": "node scripts/deploy-url.mjs"
   },
   "dependencies": {
-    "@base-ui/react": "1.8.0",
-    "@vercel/blob": "^2.6.1",
+    "@base-ui/react": "1.9.0",
+    "@vercel/blob": "^2.8.2",
     "canvas-confetti": "^1.9.4",
-    "next": "^15.1.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "next": "^15.5.28",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.6",
+    "@eslint/eslintrc": "^3.3.7",
     "@types/canvas-confetti": "^1.9.0",
-    "@types/node": "^22.10.5",
-    "@types/react": "^19.0.2",
-    "@types/react-dom": "^19.0.2",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "ajv": "^6.15.0",
     "eslint": "^9.39.5",
-    "eslint-config-next": "^15.5.24",
-    "happy-dom": "^20.11.1",
+    "eslint-config-next": "^15.5.28",
+    "happy-dom": "^20.14.6",
     "typescript": "^5.7.2",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.12"
   }
 }
